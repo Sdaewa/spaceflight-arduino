@@ -1,8 +1,8 @@
-var express = require('express')
-const five = require('johnny-five')
-const app = express()
-const request = require('request')
-const _ = require('underscore')
+var express = require('express');
+const five = require('johnny-five');
+const app = express();
+const axios = require('axios');
+const _ = require('underscore');
 
 const server = require('http').Server(app);
 const port = 5000;
@@ -36,13 +36,13 @@ board.on("ready", function () {
             url: 'http://jsonplaceholder.typicode.com/',
             json: true
         }, function (error, response, body) {
-            let data = _.pluck(body.results, 'member')
 
-            resp.json(data);
 
-            console.log(data);
+            resp.json(response);
 
-            lcd.clear().print(data);
+            console.log(response);
+
+            lcd.clear().print(response);
         });
     });
 

@@ -5,8 +5,8 @@
     "main": "script.js",
     "author": "Luis Ramirez",
     "dependencies": {
+        "axios": "^0.21.1",
         "express": "^4.12.3",
-        "request": "^2.55.0",
         "underscore": "^1.8.3"
     }
 }
