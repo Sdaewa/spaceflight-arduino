@@ -1,0 +1,12 @@
+{
+    "name": "arduino-spaceAPI",
+    "version": "1.0.0",
+    "description": "Connecting the space API to Arduino LCD",
+    "main": "script.js",
+    "author": "Luis Ramirez",
+    "dependencies": {
+        "express": "^4.12.3",
+        "request": "^2.55.0",
+        "underscore": "^1.8.3"
+    }
+}
