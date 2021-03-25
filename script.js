@@ -3,16 +3,18 @@ const five = require('johnny-five');
 const app = express();
 const axios = require('axios');
 const scroll = require('lcd-scrolling');
+// const countdown = require('countdown');
+
 
 const server = require('http').Server(app);
 const port = 3000;
 
-const URL = 'https://ll.thespacedevs.com/2.0.0/launch/?mode=list&search=SpaceX';
+const URL = 'https://ll.thespacedevs.com/2.0.0/launch/upcoming';
 
 const board = new five.Board();
 
 board.on("ready", function () {
-    console.log('Ready')
+    console.log('Ready');
 
     lcd = new five.LCD({
         pins: [12, 11, 5, 4, 3, 2],
@@ -24,9 +26,6 @@ board.on("ready", function () {
         // lines: number of lines, defaults to 2
         // dots: matrix dimensions, defaults to "5x8"
     });
-    // this.wait(3000, function () {
-    //     lcd.clear().cursor(0, 0)
-    // });
 
     scroll.setup({
         lcd: lcd,
@@ -49,14 +48,35 @@ board.on("ready", function () {
     app.get('', (req, res) => {
         axios.get(URL)
             .then(response => {
-                console.log(response.data.results[0].lsp_name)
+                // console.log(response.data.results[0].net)
 
-                let org = response.data.results[0].lsp_name;
-                let mission = response.data.results[0].mission;
+                let launch_prov = response.data.results[3].launch_service_provider.name;
+                let launch_time = response.data.results[3].net;
+
+                let countDownDate = new Date(launch_time).getTime();
+
+                let x = setInterval(() => {
+
+                    let now = new Date().getTime();
+
+                    let distance = countDownDate - now;
+
+                    let d = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    let h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    let m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    let s = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    scroll.line(1, d + "d " + h + "h " +
+                        m + "m " + s + "s ");
+
+                    if (distance < 0) {
+                        clearInterval(x);
+                        scroll.line(1, "EXPIRED");
+                    }
+                }, 1000);
 
 
-                scroll.line(0, org);
-                scroll.line(1, mission === null ? 'no info' : mission);
+                scroll.line(0, launch_prov === undefined || null ? 'no info' : launch_prov);
 
 
             }).catch(e => {
@@ -68,7 +88,7 @@ board.on("ready", function () {
     app.listen(port);
 
     process.on("SIGINT", (_) => {
-        lcd.close();
+        lcd.off();
         process.exit();
     });
 });

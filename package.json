@@ -7,9 +7,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "express": "^4.12.3",
-    "lcd-scrolling": "^1.0.2",
-    "request": "^2.88.2",
-    "underscore": "^1.8.3"
+    "lcd-scrolling": "^1.0.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
