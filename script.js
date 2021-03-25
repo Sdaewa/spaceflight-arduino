@@ -3,12 +3,11 @@ const five = require('johnny-five');
 const app = express();
 const axios = require('axios');
 const scroll = require('lcd-scrolling');
-const _ = require('underscore');
 
 const server = require('http').Server(app);
 const port = 3000;
 
-const URL = 'http://jsonplaceholder.typicode.com/';
+const URL = 'https://ll.thespacedevs.com/2.0.0/launch/?mode=list&search=SpaceX';
 
 const board = new five.Board();
 
@@ -34,7 +33,7 @@ board.on("ready", function () {
         /* Required */
 
         // Optional parameters defaults
-        // debug: false, - true will enable console.log()
+        // debug: true, - true will enable console.log()
         // char_length: 16, - Number of characters per line on your LCD
         // row: 2, - Number of rows on your LCD
         // firstCharPauseDuration: 4000, - Duration of the pause before your text start scrolling. Value in ms
@@ -43,38 +42,33 @@ board.on("ready", function () {
         // full: true - Extend text with white space to be animated out of the screen completely
     });
 
-
-    scroll.line(0, "Text of the first line");
-    scroll.line(1, "something");
-
     this.repl.inject({
         lcd: lcd
     });
 
-    // app.get('/', function (req, resp) {
-    // request({
-    //     url: 'http://jsonplaceholder.typicode.com/',
-    //     json: true
-    // }, function (error, response, body) {
-
-
-    //     // resp.json(response);
-
-    //     // console.log(response);
-
-    //     lcd.clear().print(response);
-    // });
-
-    app.get('/', (req, res) => {
+    app.get('', (req, res) => {
         axios.get(URL)
             .then(response => {
-                // handle success
-                scroll.line(0, response);
-                scroll.line(1, "something");
-            })
-    })
+                console.log(response.data.results[0].lsp_name)
 
-    // });
+                let org = response.data.results[0].lsp_name;
+                let mission = response.data.results[0].mission;
+
+
+                scroll.line(0, org);
+                scroll.line(1, mission === null ? 'no info' : mission);
+
+
+            }).catch(e => {
+                console.log(e)
+            });
+    });
+
+
     app.listen(port);
 
+    process.on("SIGINT", (_) => {
+        lcd.close();
+        process.exit();
+    });
 });

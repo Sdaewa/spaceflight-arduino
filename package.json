@@ -1,13 +1,26 @@
 {
-    "name": "arduino-spaceAPI",
-    "version": "1.0.0",
-    "description": "Connecting the space API to Arduino LCD",
-    "main": "script.js",
-    "author": "Luis Ramirez",
-    "dependencies": {
-        "axios": "^0.21.1",
-        "express": "^4.12.3",
-        "lcd-scrolling": "^1.0.2",
-        "underscore": "^1.8.3"
-    }
+  "name": "arduino-spaceapi",
+  "version": "1.0.0",
+  "description": "Connecting the space API to Arduino LCD",
+  "main": "script.js",
+  "author": "Luis Ramirez",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.12.3",
+    "lcd-scrolling": "^1.0.2",
+    "request": "^2.88.2",
+    "underscore": "^1.8.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sdaewa/spaceflight-arduino.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sdaewa/spaceflight-arduino/issues"
+  },
+  "homepage": "https://github.com/Sdaewa/spaceflight-arduino#readme"
 }
