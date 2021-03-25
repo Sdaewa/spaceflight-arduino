@@ -2,6 +2,7 @@ var express = require('express');
 const five = require('johnny-five');
 const app = express();
 const axios = require('axios');
+const scroll = require('lcd-scrolling');
 const _ = require('underscore');
 
 const server = require('http').Server(app);
@@ -23,15 +24,31 @@ board.on("ready", function () {
     });
     // this.wait(3000, function () {
     //     lcd.clear().cursor(0, 0)
-    //     lcd.autoscroll().print("Bloop").print("Bleep");
-
     // });
+
+    scroll.setup({
+        lcd: lcd,
+        /* Required */
+
+        // Optional parameters defaults
+        // debug: false, - true will enable console.log()
+        // char_length: 16, - Number of characters per line on your LCD
+        // row: 2, - Number of rows on your LCD
+        // firstCharPauseDuration: 4000, - Duration of the pause before your text start scrolling. Value in ms
+        // lastCharPauseDuration: 1000, - Duration to wait before restarting the animation
+        // scrollingDuration: 300, - Time per step (speed of the animation).
+        // full: true - Extend text with white space to be animated out of the screen completely
+    });
+
+
+    scroll.line(0, "Text of the first line");
+    scroll.line(1, );
 
     this.repl.inject({
         lcd: lcd
     });
 
-    app.get('/posts', function (req, resp) {
+    app.get('/', function (req, resp) {
         request({
             url: 'http://jsonplaceholder.typicode.com/',
             json: true
