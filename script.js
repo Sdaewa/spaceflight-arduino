@@ -6,11 +6,14 @@ const scroll = require('lcd-scrolling');
 const _ = require('underscore');
 
 const server = require('http').Server(app);
-const port = 5000;
+const port = 3000;
+
+const URL = 'http://jsonplaceholder.typicode.com/';
 
 const board = new five.Board();
 
 board.on("ready", function () {
+    console.log('Ready')
 
     lcd = new five.LCD({
         pins: [12, 11, 5, 4, 3, 2],
@@ -42,25 +45,36 @@ board.on("ready", function () {
 
 
     scroll.line(0, "Text of the first line");
-    scroll.line(1, );
+    scroll.line(1, "something");
 
     this.repl.inject({
         lcd: lcd
     });
 
-    app.get('/', function (req, resp) {
-        request({
-            url: 'http://jsonplaceholder.typicode.com/',
-            json: true
-        }, function (error, response, body) {
+    // app.get('/', function (req, resp) {
+    // request({
+    //     url: 'http://jsonplaceholder.typicode.com/',
+    //     json: true
+    // }, function (error, response, body) {
 
 
-            resp.json(response);
+    //     // resp.json(response);
 
-            console.log(response);
+    //     // console.log(response);
 
-            lcd.clear().print(response);
-        });
-    });
+    //     lcd.clear().print(response);
+    // });
+
+    app.get('/', (req, res) => {
+        axios.get(URL)
+            .then(response => {
+                // handle success
+                scroll.line(0, response);
+                scroll.line(1, "something");
+            })
+    })
+
+    // });
+    app.listen(port);
 
 });
