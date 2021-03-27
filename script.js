@@ -3,8 +3,6 @@ const five = require('johnny-five');
 const app = express();
 const axios = require('axios');
 const scroll = require('lcd-scrolling');
-// const countdown = require('countdown');
-
 
 const server = require('http').Server(app);
 const port = 3000;
@@ -12,6 +10,7 @@ const port = 3000;
 const URL = 'https://ll.thespacedevs.com/2.0.0/launch/upcoming';
 
 const board = new five.Board();
+
 
 board.on("ready", function () {
     console.log('Ready');
@@ -48,10 +47,9 @@ board.on("ready", function () {
     app.get('', (req, res) => {
         axios.get(URL)
             .then(response => {
-                // console.log(response.data.results[0].net)
 
-                let launch_prov = response.data.results[3].launch_service_provider.name;
-                let launch_time = response.data.results[3].net;
+                let launch_prov = response.data.results[4].launch_service_provider.name;
+                let launch_time = response.data.results[4].net;
 
                 let countDownDate = new Date(launch_time).getTime();
 
@@ -71,7 +69,7 @@ board.on("ready", function () {
 
                     if (distance < 0) {
                         clearInterval(x);
-                        scroll.line(1, "EXPIRED");
+                        scroll.line(1, "LIFT OFF!");
                     }
                 }, 1000);
 
