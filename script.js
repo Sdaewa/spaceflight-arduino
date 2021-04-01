@@ -19,7 +19,8 @@ board.on("ready", function () {
         pins: [12, 11, 5, 4, 3, 2],
         backlight: 6,
         rows: 2,
-        cols: 16
+        cols: 16,
+        debug: true
         // Options:
         // bitMode: 4 or 8, defaults to 4
         // lines: number of lines, defaults to 2
