@@ -27,6 +27,10 @@ board.on("ready", function () {
         // dots: matrix dimensions, defaults to "5x8"
     });
 
+    piezo = new five.Piezo({
+        pin: 6
+    });
+
     scroll.setup({
         lcd: lcd,
         /* Required */
@@ -71,6 +75,16 @@ board.on("ready", function () {
                     if (distance < 0) {
                         clearInterval(x);
                         scroll.line(1, "LIFT OFF!");
+                        piezo.play({
+                            tempo: 150,
+                            song: [
+                                ["c4", 1],
+                                ["e4", 2],
+                                ["g4", 3],
+                                [null, 4]
+                            ]
+                        });
+
                     }
                 }, 1000);
 
