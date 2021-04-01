@@ -2,7 +2,7 @@ const five = require('johnny-five');
 const axios = require('axios');
 const scroll = require('lcd-scrolling');
 
-const URL = 'https://ll.thespacedevs.com/2.0.0/launch/upcoming';
+const URL = 'https://ll.thespacedevs.com/2.0.0/launch/upcomings';
 
 
 const board = new five.Board();
@@ -66,8 +66,7 @@ board.on("ready", function () {
                 scroll.line(1, d + "d " + h + "h " +
                     m + "m " + s + "s ");
 
-                if (distance < 0) {
-                    clearInterval(x);
+                if (distance <= 0) {
                     scroll.line(1, "LIFT OFF!");
                     piezo.play({
                         tempo: 150,
@@ -75,15 +74,17 @@ board.on("ready", function () {
                             ["c4", 1],
                             ["e4", 2],
                             ["g4", 3],
-                            [null, 4]
+                            ["c4", 1],
+                            ["e4", 2],
+                            ["g4", 3]
                         ]
                     });
+                    clearInterval(x);
                 }
             }, 1000);
 
 
             scroll.line(0, launch_prov === undefined || null ? 'no info' : launch_prov + ' - ' + launch_mission);
-
 
         }).catch(e => {
             console.log(e)
