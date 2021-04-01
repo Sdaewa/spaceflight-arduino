@@ -2,7 +2,7 @@ const five = require('johnny-five');
 const axios = require('axios');
 const scroll = require('lcd-scrolling');
 
-const URL = 'https://ll.thespacedevs.com/2.0.0/launch/upcomings';
+const URL = 'https://ll.thespacedevs.com/2.0.0/launch/upcoming';
 
 
 const board = new five.Board();
@@ -52,7 +52,7 @@ board.on("ready", function () {
 
             let countDownDate = new Date(launch_time).getTime();
 
-            let x = setInterval(() => {
+            let interval = setInterval(() => {
 
                 let now = new Date().getTime();
 
@@ -79,7 +79,7 @@ board.on("ready", function () {
                             ["g4", 3]
                         ]
                     });
-                    clearInterval(x);
+                    clearInterval(interval);
                 }
             }, 1000);
 
