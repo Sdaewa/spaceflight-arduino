@@ -1,16 +1,11 @@
-var express = require('express');
 const five = require('johnny-five');
-const app = express();
 const axios = require('axios');
 const scroll = require('lcd-scrolling');
 
-const server = require('http').Server(app);
-const port = 3000;
-
 const URL = 'https://ll.thespacedevs.com/2.0.0/launch/upcoming';
 
-const board = new five.Board();
 
+const board = new five.Board();
 
 board.on("ready", function () {
     console.log('Ready');
@@ -20,7 +15,6 @@ board.on("ready", function () {
         backlight: 6,
         rows: 2,
         cols: 16,
-        debug: true
         // Options:
         // bitMode: 4 or 8, defaults to 4
         // lines: number of lines, defaults to 2
@@ -49,59 +43,49 @@ board.on("ready", function () {
         lcd: lcd
     });
 
-    app.get('', (req, res) => {
-        axios.get(URL)
-            .then(response => {
+    axios.get(URL)
+        .then(response => {
 
-                let launch_prov = response.data.results[4].launch_service_provider.name;
-                let launch_time = response.data.results[4].net;
+            let launch_prov = response.data.results[4].launch_service_provider.name;
+            let launch_mission = response.data.results[4].mission.name;
+            let launch_time = response.data.results[4].net;
 
-                let countDownDate = new Date(launch_time).getTime();
+            let countDownDate = new Date(launch_time).getTime();
 
-                let x = setInterval(() => {
+            let x = setInterval(() => {
 
-                    let now = new Date().getTime();
+                let now = new Date().getTime();
 
-                    let distance = countDownDate - now;
+                let distance = countDownDate - now;
 
-                    let d = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    let h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    let m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    let s = Math.floor((distance % (1000 * 60)) / 1000);
+                let d = Math.floor(distance / (1000 * 60 * 60 * 24));
+                let h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                let s = Math.floor((distance % (1000 * 60)) / 1000);
 
-                    scroll.line(1, d + "d " + h + "h " +
-                        m + "m " + s + "s ");
+                scroll.line(1, d + "d " + h + "h " +
+                    m + "m " + s + "s ");
 
-                    if (distance < 0) {
-                        clearInterval(x);
-                        scroll.line(1, "LIFT OFF!");
-                        piezo.play({
-                            tempo: 150,
-                            song: [
-                                ["c4", 1],
-                                ["e4", 2],
-                                ["g4", 3],
-                                [null, 4]
-                            ]
-                        });
-
-                    }
-                }, 1000);
-
-
-                scroll.line(0, launch_prov === undefined || null ? 'no info' : launch_prov);
+                if (distance < 0) {
+                    clearInterval(x);
+                    scroll.line(1, "LIFT OFF!");
+                    piezo.play({
+                        tempo: 150,
+                        song: [
+                            ["c4", 1],
+                            ["e4", 2],
+                            ["g4", 3],
+                            [null, 4]
+                        ]
+                    });
+                }
+            }, 1000);
 
 
-            }).catch(e => {
-                console.log(e)
-            });
-    });
+            scroll.line(0, launch_prov === undefined || null ? 'no info' : launch_prov + ' - ' + launch_mission);
 
 
-    app.listen(port);
-
-    process.on("SIGINT", (_) => {
-        lcd.off();
-        process.exit();
-    });
+        }).catch(e => {
+            console.log(e)
+        });
 });
