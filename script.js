@@ -17,7 +17,7 @@ board.on("ready", function () {
     });
 
 
-    //set 2x16 LCD  hardware in Digital bus
+    //set 2x16 LCD  hardware to Digital bus
     lcd = new five.LCD({
         pins: [12, 11, 5, 4, 3, 2],
         backlight: 6,
