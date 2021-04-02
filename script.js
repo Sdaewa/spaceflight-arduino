@@ -2,7 +2,6 @@ const five = require('johnny-five');
 const axios = require('axios');
 const scroll = require('lcd-scrolling');
 const board = new five.Board();
-const piezo = new five.Piezo(6);
 
 const URL = 'https://ll.thespacedevs.com/2.0.0/launch/upcoming';
 
@@ -11,7 +10,12 @@ const URL = 'https://ll.thespacedevs.com/2.0.0/launch/upcoming';
 board.on("ready", function () {
     console.log('Ready');
 
-    //set 2x16 LCD in Digital bus
+    //set piezo hardware to Digital bus
+    piezo = new five.Piezo({
+        pin: 6
+    });
+
+    //set 2x16 LCD  hardware in Digital bus
     lcd = new five.LCD({
         pins: [12, 11, 5, 4, 3, 2],
         backlight: 6,
@@ -40,24 +44,26 @@ board.on("ready", function () {
 
     // allows CLI commands
     this.repl.inject({
-        lcd: lcd
+        lcd: lcd,
+        piezo: piezo
     });
 
 
     axios.get(URL)
         .then(response => {
 
-            let launch_prov = response.data.results[4].launch_service_provider.name;
-            let launch_mission = response.data.results[4].mission.name;
-            let launch_time = response.data.results[4].net;
+            let launch_prov = response.data.results[0].launch_service_provider.name;
+            let launch_mission = response.data.results[0].mission.name;
+            let launch_time = response.data.results[0].net;
 
             let countDownDate = new Date(launch_time).getTime();
 
             let interval = setInterval(() => {
 
-                let now = new Date().getTime();
+                // let now = new Date().getTime();
 
-                let distance = countDownDate - now;
+                // let distance = countDownDate - now;
+                let distance = 0;
 
                 let d = Math.floor(distance / (1000 * 60 * 60 * 24));
                 let h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -68,28 +74,30 @@ board.on("ready", function () {
                     m + 'm ' + s + 's ';
 
                 scroll.line(1, countdown === NaN || null ? 'no countdown found' : countdown);
-
-                // when countdown finish alarm goes off and clears LCD
-                if (distance <= 0) {
-                    scroll.line(1, "LIFT OFF!");
-                    piezo.play({
-                        tempo: 150,
-                        song: [
-                            ["c4", 1],
-                            ["e4", 2],
-                            ["g4", 3],
-                            ["c4", 1],
-                            ["e4", 2],
-                            ["g4", 3]
-                        ]
-                    });
-                    clearInterval(interval);
-                }
             }, 1000);
+
+            // when countdown finish alarm goes off and clears LCD
+            if (distance <= 0) {
+                clearInterval(interval);
+                piezo.play({
+                    tempo: 150,
+                    song: [
+                        ["c4", 1],
+                        ["e4", 2],
+                        ["g4", 3],
+                        ["c4", 1],
+                        ["e4", 2],
+                        ["g4", 3]
+                    ]
+                });
+                scroll.line(0, '--------');
+                scroll.line(1, 'lift off!');
+            }
 
             scroll.line(0, launch_prov === undefined || null ? 'no info' : launch_prov + ' - ' + launch_mission);
 
         }).catch(e => {
             console.log(e)
+            scroll.line(0, 'Something went wrong');
         });
 });
