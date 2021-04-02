@@ -17,6 +17,16 @@ run the following command
 node script.js
 ```
 
-## Sources
+## Components
+```
 
-API endpoint from thespacedevs.com
+-Arduino UNO
+-Breadboard
+-Jumper wires
+-10K potentiometer with knob
+-piezo
+-2x16 LCD (can be bigger but will need config)
+-Wires
+```
+## Sources
+API endpoint from [The Space Devs](https://thespacedevs.com/)
