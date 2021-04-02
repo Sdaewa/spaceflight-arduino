@@ -4,6 +4,7 @@ const scroll = require('lcd-scrolling');
 const board = new five.Board();
 
 const URL = 'https://ll.thespacedevs.com/2.0.0/launch/upcoming';
+let distance;
 
 
 // init board
@@ -14,6 +15,7 @@ board.on("ready", function () {
     piezo = new five.Piezo({
         pin: 6
     });
+
 
     //set 2x16 LCD  hardware in Digital bus
     lcd = new five.LCD({
@@ -26,6 +28,7 @@ board.on("ready", function () {
         // lines: number of lines, defaults to 2
         // dots: matrix dimensions, defaults to "5x8"
     });
+
 
     // LCD scroll patch - johnny five autoscroll not working
     scroll.setup({
@@ -41,6 +44,7 @@ board.on("ready", function () {
         // scrollingDuration: 300, - Time per step (speed of the animation).
         // full: true - Extend text with white space to be animated out of the screen completely
     });
+
 
     // allows CLI commands
     this.repl.inject({
@@ -60,10 +64,9 @@ board.on("ready", function () {
 
             let interval = setInterval(() => {
 
-                // let now = new Date().getTime();
+                let now = new Date().getTime();
 
-                // let distance = countDownDate - now;
-                let distance = 0;
+                distance = countDownDate - now;
 
                 let d = Math.floor(distance / (1000 * 60 * 60 * 24));
                 let h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -73,31 +76,36 @@ board.on("ready", function () {
                 let countdown = d + 'd ' + h + 'h ' +
                     m + 'm ' + s + 's ';
 
+
                 scroll.line(1, countdown === NaN || null ? 'no countdown found' : countdown);
+
+
+                // when countdown finish alarm goes off and clears LCD
+                if (distance <= 0) {
+                    clearInterval(interval);
+                    scroll.line(0, '--------');
+                    scroll.line(1, 'LIFT OFF');
+                    piezo.play({
+                        tempo: 150,
+                        song: [
+                            ["c4", 1],
+                            ["e4", 2],
+                            ["g4", 3],
+                            ["c4", 1],
+                            ["e4", 2],
+                            ["g4", 3]
+                        ]
+                    });
+                }
+
             }, 1000);
 
-            // when countdown finish alarm goes off and clears LCD
-            if (distance <= 0) {
-                clearInterval(interval);
-                piezo.play({
-                    tempo: 150,
-                    song: [
-                        ["c4", 1],
-                        ["e4", 2],
-                        ["g4", 3],
-                        ["c4", 1],
-                        ["e4", 2],
-                        ["g4", 3]
-                    ]
-                });
-                scroll.line(0, '--------');
-                scroll.line(1, 'lift off!');
-            }
 
             scroll.line(0, launch_prov === undefined || null ? 'no info' : launch_prov + ' - ' + launch_mission);
 
+
         }).catch(e => {
-            console.log(e)
+            console.log(e);
             scroll.line(0, 'Something went wrong');
         });
 });
