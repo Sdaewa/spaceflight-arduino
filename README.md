@@ -18,15 +18,13 @@ node script.js
 ```
 
 ## Components
-```
+- Arduino UNO
+- Breadboard
+- Jumper wires
+- 10K potentiometer with knob
+- piezo
+- 2x16 LCD (can be bigger but will need config)
+- Wires
 
--Arduino UNO
--Breadboard
--Jumper wires
--10K potentiometer with knob
--piezo
--2x16 LCD (can be bigger but will need config)
--Wires
-```
 ## Sources
 API endpoint from [The Space Devs](https://thespacedevs.com/)
