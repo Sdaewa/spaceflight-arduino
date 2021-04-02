@@ -1,15 +1,17 @@
 const five = require('johnny-five');
 const axios = require('axios');
 const scroll = require('lcd-scrolling');
+const board = new five.Board();
+const piezo = new five.Piezo(6);
 
 const URL = 'https://ll.thespacedevs.com/2.0.0/launch/upcoming';
 
 
-const board = new five.Board();
-
+// init board
 board.on("ready", function () {
     console.log('Ready');
 
+    //set 2x16 LCD in Digital bus
     lcd = new five.LCD({
         pins: [12, 11, 5, 4, 3, 2],
         backlight: 6,
@@ -21,10 +23,7 @@ board.on("ready", function () {
         // dots: matrix dimensions, defaults to "5x8"
     });
 
-    piezo = new five.Piezo({
-        pin: 6
-    });
-
+    // LCD scroll patch - johnny five autoscroll not working
     scroll.setup({
         lcd: lcd,
         /* Required */
@@ -39,9 +38,11 @@ board.on("ready", function () {
         // full: true - Extend text with white space to be animated out of the screen completely
     });
 
+    // allows CLI commands
     this.repl.inject({
         lcd: lcd
     });
+
 
     axios.get(URL)
         .then(response => {
@@ -63,9 +64,12 @@ board.on("ready", function () {
                 let m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 let s = Math.floor((distance % (1000 * 60)) / 1000);
 
-                scroll.line(1, d + "d " + h + "h " +
-                    m + "m " + s + "s ");
+                let countdown = d + 'd ' + h + 'h ' +
+                    m + 'm ' + s + 's ';
 
+                scroll.line(1, countdown === NaN || null ? 'no countdown found' : countdown);
+
+                // when countdown finish alarm goes off and clears LCD
                 if (distance <= 0) {
                     scroll.line(1, "LIFT OFF!");
                     piezo.play({
@@ -82,7 +86,6 @@ board.on("ready", function () {
                     clearInterval(interval);
                 }
             }, 1000);
-
 
             scroll.line(0, launch_prov === undefined || null ? 'no info' : launch_prov + ' - ' + launch_mission);
 
