@@ -57,7 +57,7 @@ board.on("ready", function () {
         .then(response => {
 
             let launch_prov = response.data.results[0].launch_service_provider.name;
-            let launch_mission = response.data.results[0].mission.name;
+            let launch_mission = response.data.results[0].name;
             let launch_time = response.data.results[0].net;
 
             let countDownDate = new Date(launch_time).getTime();
