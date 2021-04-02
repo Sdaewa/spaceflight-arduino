@@ -1,4 +1,4 @@
-# Arduino Rocket Launch 
+# IoT Arduino Rocket Launch 
 
 Countdown with alarm for rocket launches using Arduino UNO and Node.js
 
